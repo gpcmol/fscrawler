@@ -26,6 +26,7 @@ import fr.pilato.elasticsearch.crawler.fs.meta.doc.DocParser;
 import fr.pilato.elasticsearch.crawler.fs.meta.settings.Elasticsearch;
 import fr.pilato.elasticsearch.crawler.fs.meta.settings.FsSettings;
 import fr.pilato.elasticsearch.crawler.fs.tika.TikaDocParser;
+import fr.pilato.elasticsearch.crawler.fs.util.CustomPropertiesUtil;
 import fr.pilato.elasticsearch.crawler.fs.util.TimeBasedUUIDGenerator;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.common.xcontent.XContentType;
@@ -43,6 +44,7 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import static fr.pilato.elasticsearch.crawler.fs.util.FsCrawlerUtil.buildUrl;
 import static fr.pilato.elasticsearch.crawler.fs.util.FsCrawlerUtil.localDateTimeToDate;
@@ -74,6 +76,7 @@ public class UploadApi extends RestApi {
             @QueryParam("debug") String debug,
             @QueryParam("simulate") String simulate,
             @FormDataParam("id") String id,
+            @FormDataParam("props") String props,
             @FormDataParam("file") InputStream filecontent,
             @FormDataParam("file") FormDataContentDisposition d) throws IOException, NoSuchAlgorithmException {
 
@@ -87,6 +90,11 @@ public class UploadApi extends RestApi {
         doc.getFile().setFilename(filename);
         doc.getFile().setIndexingDate(localDateTimeToDate(LocalDateTime.now()));
         // File
+
+        // custom properties
+        Map<String, String> properties = CustomPropertiesUtil.parseCustomProperties(props);
+        doc.setProperties(properties);
+        // custom properties
 
         // Path
         if (id == null) {
