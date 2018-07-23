@@ -104,6 +104,9 @@ public class FsMatchFilesTest extends AbstractFSCrawlerTestCase {
         assertThat(isIndexable(true, "folderB/subfolderB", new ArrayList<>(), Collections.singletonList("folderB/subfolder*")), is(false));
         assertThat(isIndexable(true, "folderB/subfolderC", new ArrayList<>(), Collections.singletonList("folderB/subfolder*")), is(false));
         assertThat(isIndexable(true, "folderC", new ArrayList<>(), Collections.singletonList("folderB/subfolder*")), is(true));
+        assertThat(isIndexable(true, "folderC/subfolderA", new ArrayList<>(), Collections.singletonList("folderB/subfolder*")), is(true));
+        assertThat(isIndexable(true, "folderC/subfolderB", new ArrayList<>(), Collections.singletonList("folderB/subfolder*")), is(true));
+        assertThat(isIndexable(true, "folderC/subfolderC", new ArrayList<>(), Collections.singletonList("folderB/subfolder*")), is(true));
         assertThat(isIndexable(true, "subfolderA", new ArrayList<>(), Collections.singletonList("folderB/subfolder*")), is(true));
         assertThat(isIndexable(true, "subfolderB", new ArrayList<>(), Collections.singletonList("folderB/subfolder*")), is(true));
         assertThat(isIndexable(true, "subfolderC", new ArrayList<>(), Collections.singletonList("folderB/subfolder*")), is(true));
@@ -116,6 +119,9 @@ public class FsMatchFilesTest extends AbstractFSCrawlerTestCase {
         assertThat(isIndexable(true, "folderB/subfolderB", new ArrayList<>(), Collections.singletonList("folderB/subfolderB")), is(false));
         assertThat(isIndexable(true, "folderB/subfolderC", new ArrayList<>(), Collections.singletonList("folderB/subfolderB")), is(true));
         assertThat(isIndexable(true, "folderC", new ArrayList<>(), Collections.singletonList("folderB/subfolderB")), is(true));
+        assertThat(isIndexable(true, "folderC/subfolderA", new ArrayList<>(), Collections.singletonList("folderB/subfolderB")), is(true));
+        assertThat(isIndexable(true, "folderC/subfolderB", new ArrayList<>(), Collections.singletonList("folderB/subfolderB")), is(true));
+        assertThat(isIndexable(true, "folderC/subfolderC", new ArrayList<>(), Collections.singletonList("folderB/subfolderB")), is(true));
         assertThat(isIndexable(true, "subfolderA", new ArrayList<>(), Collections.singletonList("folderB/subfolderB")), is(true));
         assertThat(isIndexable(true, "subfolderB", new ArrayList<>(), Collections.singletonList("folderB/subfolderB")), is(true));
         assertThat(isIndexable(true, "subfolderC", new ArrayList<>(), Collections.singletonList("folderB/subfolderB")), is(true));
