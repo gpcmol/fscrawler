@@ -62,7 +62,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static fr.pilato.elasticsearch.crawler.fs.framework.FsCrawlerUtil.computeVirtualPathName;
-import static fr.pilato.elasticsearch.crawler.fs.framework.FsCrawlerUtil.isExcluded;
 import static fr.pilato.elasticsearch.crawler.fs.framework.FsCrawlerUtil.isIndexable;
 import static fr.pilato.elasticsearch.crawler.fs.framework.FsCrawlerUtil.localDateTimeToDate;
 import static fr.pilato.elasticsearch.crawler.fs.tika.TikaDocParser.generate;
@@ -241,13 +240,7 @@ public abstract class FsParser implements Runnable {
                 String filename = child.name;
 
                 // https://github.com/dadoonet/fscrawler/issues/1 : Filter documents
-                boolean isIndexable = isIndexable(filename, fsSettings.getFs().getIncludes(), fsSettings.getFs().getExcludes());
-
-                // It can happen that we a dir "foo" which does not match the include name like "*.txt"
-                // We need to go in it unless it has been explicitly excluded by the user
-                if (child.directory && !isExcluded(filename, fsSettings.getFs().getExcludes())) {
-                    isIndexable = true;
-                }
+                boolean isIndexable = isIndexable(child.directory, filename, fsSettings.getFs().getIncludes(), fsSettings.getFs().getExcludes());
 
                 logger.debug("[{}] can be indexed: [{}]", filename, isIndexable);
                 if (isIndexable) {
@@ -300,7 +293,7 @@ public abstract class FsParser implements Runnable {
             for (String esfile : esFiles) {
                 logger.trace("Checking file [{}]", esfile);
 
-                if (isIndexable(esfile, fsSettings.getFs().getIncludes(), fsSettings.getFs().getExcludes())
+                if (isIndexable(false, esfile, fsSettings.getFs().getIncludes(), fsSettings.getFs().getExcludes())
                         && !fsFiles.contains(esfile)) {
                     logger.trace("Removing file [{}] in elasticsearch", esfile);
                     esDelete(fsSettings.getElasticsearch().getIndex(), generateIdFromFilename(esfile, filepath));
@@ -314,7 +307,7 @@ public abstract class FsParser implements Runnable {
 
                 // for the delete folder
                 for (String esfolder : esFolders) {
-                    if (isIndexable(esfolder, fsSettings.getFs().getIncludes(), fsSettings.getFs().getExcludes())) {
+                    if (isIndexable(true, esfolder, fsSettings.getFs().getIncludes(), fsSettings.getFs().getExcludes())) {
                         logger.trace("Checking directory [{}]", esfolder);
                         if (!fsFolders.contains(esfolder)) {
                             logger.trace("Removing recursively directory [{}] in elasticsearch", esfolder);
